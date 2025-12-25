@@ -80,13 +80,25 @@ export class Renderer {
         if (x < 0 || y < 0 || x > this.imageData.width || y > this.imageData.height)
             return
 
-        let color = fShader({ screenPosition: pos }).color
+        let fColor = fShader({ screenPosition: pos }).color
+        let fColorWrap = [
+            fColor[0] ?? 0.0,
+            fColor[1] ?? 0.0,
+            fColor[2] ?? 0.0,
+            fColor[3] ?? 1.0,
+        ]
+        let color = [
+            Math.trunc(util.math.blend.lerp(this.imageData.data[index + 0] / 255, fColorWrap[0], fColorWrap[3]) * 255),
+            Math.trunc(util.math.blend.lerp(this.imageData.data[index + 1] / 255, fColorWrap[1], fColorWrap[3]) * 255),
+            Math.trunc(util.math.blend.lerp(this.imageData.data[index + 2] / 255, fColorWrap[2], fColorWrap[3]) * 255),
+            255
+        ]
 
         // write pixel
-        this.imageData.data[index + 0] = Math.trunc((color[0] ?? 0.0) * 255)
-        this.imageData.data[index + 1] = Math.trunc((color[1] ?? 0.0) * 255)
-        this.imageData.data[index + 2] = Math.trunc((color[2] ?? 0.0) * 255)
-        this.imageData.data[index + 3] = Math.trunc((color[3] ?? 1.0) * 255)
+        this.imageData.data[index + 0] = color[0]
+        this.imageData.data[index + 1] = color[1]
+        this.imageData.data[index + 2] = color[2]
+        this.imageData.data[index + 3] = color[3]
     }
     #plotLine(pos0: Vector2, pos1: Vector2, fShader: FragmentShader) {
         let x0 = Math.trunc(pos0[0]), 
