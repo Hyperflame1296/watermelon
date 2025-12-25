@@ -1,0 +1,6 @@
+*.ts
+testing/
+src/
+/autobuild.ps1
+/package-lock.json
+/rollup.config.js
